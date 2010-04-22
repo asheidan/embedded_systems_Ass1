@@ -16,10 +16,11 @@ AVR-PATH    := /usr/local/CrossPack-AVR/bin
 AVR-CC      := $(AVR-PATH)/avr-gcc
 AVR-OBJCOPY := $(AVR-PATH)/avr-objcopy
 AVR-OBJDUMP := $(AVR-PATH)/avr-objdump
+AVR-SIZE    := $(AVR-PATH)/avr-size
 
 ### Commands #################################################################
 
-AVRDUDE = avrdude $(PROGRAMMER) -p $(DEVICE)
+AVRDUDE = $(AVR-PATH)/avrdude $(PROGRAMMER) -p $(DEVICE)
 COMPILE = $(AVR-CC) -Wall -Os -mmcu=$(DEVICE)
 
 ### Functions ################################################################
@@ -34,13 +35,16 @@ endef
 
 default: $(TARGHEX)
 
-test.elf: $(TARGOBJS)
+$(TARGET): $(TARGOBJS)
 	$(COMPILE) -o $@ $^
 
 ### Rules ####################################################################
 
 disasm: $(TARGET)
-	$(AVR-OBJDUMP) -d $<
+	@$(AVR-OBJDUMP) -d $<
+
+sizes: $(TARGOBJS)
+	@$(AVR-SIZE) --totals $(sort $^)
 
 flash: $(TARGHEX)
 	$(AVRDUDE) -U flash:w:$<:i
