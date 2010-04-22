@@ -34,7 +34,7 @@ void TransmitByte( unsigned char data )
 	UDR = data; 						// start transmittion 
 	}
 
-int main()  { 
+int main() {
  	DDRD = 0xFF;			// output
 	DDRB = 0;				// input
 	SETBIT(PORTB,PB0);		// enable pull-up
@@ -42,7 +42,7 @@ int main()  {
 	InitUART(51);			// 1200 Baud, 1 Mhz
 	unsigned char	ch;
 
- 	for(;;)  { 
+ 	for(;;) { 
 		ch = ReceiveByte();
 		PORTD = (ch & 0x0F) * 4;
 		if(bit_is_clear(PINB,PB0))	TransmitByte(ch);
