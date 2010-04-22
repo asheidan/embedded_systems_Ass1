@@ -1,0 +1,9 @@
+(start)->(Setup)->(Wait)
+# 
+(Wait)[Timer]->(IR)->(Wait)
+(IR)[If sensor close]->(Update Collision Data)
+# 
+(Wait)[PC Int.]->(Collision)->(Update Collision Data)
+(Update Collision Data)->(Transmit)->(Wait)
+# 
+(Wait)[Usart Int.]->(Recieve)->(Update Motor Signals)->(Wait)
