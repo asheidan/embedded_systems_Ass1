@@ -1,6 +1,6 @@
 ### Makefile for AVR #########################################################
 TARGET     = test.elf
-TARGOBJS   = test.o
+TARGOBJS   = uart.o
 TARGHEX    = $(TARGET:.elf=.hex)
 
 DEVICE     = attiny2313
