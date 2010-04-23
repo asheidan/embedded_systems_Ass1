@@ -1,12 +1,13 @@
 ### Makefile for AVR #########################################################
 TARGET     = test.elf
-TARGOBJS   = uart.o
+TARGOBJS   = test.o
 TARGHEX    = $(TARGET:.elf=.hex)
 
 DEVICE     = attiny2313
 CLOCK      = 8000000
-PROGRAMMER = -c stk500v2 -P avrdoper
-FUSES      = -U hfuse:w:0xd9:m -U lfuse:w:0x24:m
+# -B 8.68us = 115.2kHz Needs to be atmost 1/4 of dev clockspeed
+PROGRAMMER = -c stk500 -P /dev/tty.PL2303-00* -B 8.68
+FUSES      = -U lfuse:w:0x64:m -U hfuse:w:0xdf:m
 
 SOURCES = $(shell ls *.c)
 
@@ -21,7 +22,7 @@ AVR-SIZE    := $(AVR-PATH)/avr-size
 ### Commands #################################################################
 
 AVRDUDE = $(AVR-PATH)/avrdude $(PROGRAMMER) -p $(DEVICE)
-COMPILE = $(AVR-CC) -Wall -Os -mmcu=$(DEVICE)
+COMPILE = $(AVR-CC) -Wall -O0 -mmcu=$(DEVICE)
 
 ### Functions ################################################################
 
@@ -51,6 +52,9 @@ flash: $(TARGHEX)
 
 fuse:
 	$(AVRDUDE) $(FUSES)
+
+readfuse:
+	$(AVRDUDE) -qq -U lfuse:r:/dev/stdout:h -U hfuse:r:/dev/stdout:h
 
 %.hex: %.elf
 	$(AVR-OBJCOPY) -j .text -j .data -O ihex $< $@
