@@ -1,6 +1,6 @@
 ### Makefile for AVR #########################################################
-TARGET     = test.elf
-TARGOBJS   = test.o
+TARGET     = main.elf
+TARGOBJS   = main.o uart.o
 TARGHEX    = $(TARGET:.elf=.hex)
 
 DEVICE     = attiny2313
@@ -12,7 +12,7 @@ FUSES      = -U lfuse:w:0x64:m -U hfuse:w:0xdf:m
 SOURCES = $(shell ls *.c)
 
 ### Paths ####################################################################
-
+CFLAGS		:= -Wall
 AVR-PATH    := /usr/local/CrossPack-AVR/bin
 AVR-CC      := $(AVR-PATH)/avr-gcc
 AVR-OBJCOPY := $(AVR-PATH)/avr-objcopy
@@ -29,7 +29,7 @@ COMPILE = $(AVR-CC) -Wall -O0 -mmcu=$(DEVICE)
 # $(call make-depend,source-file,object-file,depend-file)
 define make-depend
 	@# Include -MM to exclude "system headers"
-	$(AVR-CC) -M -MP -MF $3 -MT $2 $1
+	$(AVR-CC) -MM -MP -MF $3 -MT $2 $1
 endef
 
 ### Project Rules ############################################################

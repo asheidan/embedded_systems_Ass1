@@ -22,6 +22,9 @@ void InitUART( unsigned int baud ) {
 	UBRRH = (unsigned char)(baud>>8);
 	UBRRL = (unsigned char)baud;				//set the baud rate 
 	UCSRB = _BV(RXEN) | _BV(TXEN);	//enable UART receiver and transmitter 
+	
+	/* Set frame format: 8data, 2stop bit */
+	UCSRC = (1<<USBS)|(3<<UCSZ0);
 }
 
 /* Read and write functions */
@@ -35,20 +38,9 @@ void TransmitByte( unsigned char data ) {
 	UDR = data; 						// start transmittion 
 }
 
-void TransmitString( unsigned char* data ) {
-	unsigned char *p;
+void TransmitString( char* data ) {
+	char *p;
 	for(p = data; *p != 0; p++) {
 		TransmitByte(*p);
 	}
 }
-
-int main() {
-	InitUART(51);			// 1200 Baud, 1 Mhz
-	unsigned char	ch;
-
- 	for(;;) { 
-		ch = ReceiveByte();
-		PORTD = (ch & 0x0F) * 4;
-		if(bit_is_clear(PINB,PB0))	TransmitByte(ch);
-  	} 
- } 

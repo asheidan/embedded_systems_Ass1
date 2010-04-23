@@ -10,7 +10,7 @@ void InitUART( unsigned int baud );
 unsigned char ReceiveByte( void );
 
 void TransmitByte( unsigned char data );
-void TransmitString( unsigned char* data );
+void TransmitString( char* data );
 
 
 #endif
