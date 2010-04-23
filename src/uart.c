@@ -9,36 +9,40 @@
 //CPU freq 1 MHz
 
 #include <avr/io.h> 
-#define	SETBIT(ADDRESS,BIT) (ADDRESS |= (1<<BIT))
-#define	CLEARBIT(ADDRESS,BIT) (ADDRESS &= ~(1<<BIT))
+#include "uart.h"
 
 
 /* initialize UART */
-void InitUART( unsigned int baud )
-	{
-	UBRRH = (unsigned char)(baud>>8);
-	UBRRL = (unsigned char)baud;				//set the baud rate 
-	UCSRB = _BV(RXEN) | _BV(TXEN);	//enable UART receiver and transmitter 
-	}
-
-/* Read and write functions */
-unsigned char ReceiveByte( void )
-	{
-	loop_until_bit_is_set(UCSRA,RXC);		// wait for incomming data 
-	return UDR;							// return the data 
-	}
-
-void TransmitByte( unsigned char data )
-	{
-	loop_until_bit_is_set(UCSRA,UDRE);	// wait for empty transmit buffer 
-	UDR = data; 						// start transmittion 
-	}
-
-int main() {
- 	DDRD = 0xFF;			// output
+void InitUART( unsigned int baud ) {
+	DDRD = 0xFF;			// output
 	DDRB = 0;				// input
 	SETBIT(PORTB,PB0);		// enable pull-up
 	SETBIT(PORTB,PB1);		// enable pull-up
+ 	
+	UBRRH = (unsigned char)(baud>>8);
+	UBRRL = (unsigned char)baud;				//set the baud rate 
+	UCSRB = _BV(RXEN) | _BV(TXEN);	//enable UART receiver and transmitter 
+}
+
+/* Read and write functions */
+unsigned char ReceiveByte( void ) {
+	loop_until_bit_is_set(UCSRA,RXC);		// wait for incomming data 
+	return UDR;							// return the data 
+}
+
+void TransmitByte( unsigned char data ) {
+	loop_until_bit_is_set(UCSRA,UDRE);	// wait for empty transmit buffer 
+	UDR = data; 						// start transmittion 
+}
+
+void TransmitString( unsigned char* data ) {
+	unsigned char *p;
+	for(p = data; *p != 0; p++) {
+		TransmitByte(*p);
+	}
+}
+
+int main() {
 	InitUART(51);			// 1200 Baud, 1 Mhz
 	unsigned char	ch;
 
