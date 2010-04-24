@@ -9,7 +9,6 @@
 //CPU freq 1 MHz
 
 #include <avr/io.h> 
-#include <avr/interrupt.h>
 
 #include "control.h"
 #include "uart.h"
