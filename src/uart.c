@@ -9,10 +9,12 @@
 //CPU freq 1 MHz
 
 #include <avr/io.h> 
+#include <avr/interrupt.h>
+
+#include "control.h"
 #include "uart.h"
-
+#include "leds.h"
 #include "bits.h"
-
 
 /* initialize UART */
 void InitUART( unsigned int baud ) {
@@ -20,7 +22,6 @@ void InitUART( unsigned int baud ) {
 	// InitUART(51);			// 1200 Baud, 1 Mhz
 	
 	DDRD = 0xFF;			// output
-	DDRB = 0;				// input
 	SETBIT(PORTB,PB0);		// enable pull-up
 	SETBIT(PORTB,PB1);		// enable pull-up
  	
@@ -30,6 +31,10 @@ void InitUART( unsigned int baud ) {
 	
 	/* Set frame format: 8data, 2stop bit */
 	UCSRC = (1<<USBS)|(3<<UCSZ0);
+	
+	/* Enagle RC_Int */
+	UCSRB |= (1<<RXCIE);
+	
 }
 
 /* Read and write functions */
