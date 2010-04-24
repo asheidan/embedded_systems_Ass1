@@ -1,5 +1,5 @@
-#ifndef __uart_h__
-#define __uart_h__
+#ifndef _UART_H_
+#define _UART_H_
 
 #define	SETBIT(ADDRESS,BIT) (ADDRESS |= (1<<BIT))
 #define	CLEARBIT(ADDRESS,BIT) (ADDRESS &= ~(1<<BIT))
