@@ -11,9 +11,14 @@
 #include <avr/io.h> 
 #include "uart.h"
 
+#include "bits.h"
+
 
 /* initialize UART */
 void InitUART( unsigned int baud ) {
+	// DDRD = 0xFF; // Set Datadirection to output
+	// InitUART(51);			// 1200 Baud, 1 Mhz
+	
 	DDRD = 0xFF;			// output
 	DDRB = 0;				// input
 	SETBIT(PORTB,PB0);		// enable pull-up
