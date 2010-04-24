@@ -9,6 +9,8 @@
 
 #define	SYSTEM_ADDRESS	'c'
 
+volatile unsigned char sensor_cache = 0;
+
 int main() {
 	/******************************************************
 	 *	Setting up device
@@ -44,9 +46,15 @@ int main() {
 ISR(PCINT_vect) {
 	unsigned char sensors = COLLISION_DATA;
 	motors_stop();
+	if(sensors != sensor_cache) {
+		sensor_cache = (~sensors & COLLISION_PINS);
+		// TODO: transmit to remote
+	}
+#ifdef __DEBUG__
 	TransmitString("\n\rCollision: ");
-	TransmitByte(sensors + '0');
+	TransmitByte(sensor_cache + '0');
 	TransmitString("\n\r");
+#endif
 }
 
 // USART, Recieve complete
