@@ -16,14 +16,15 @@
 #include "leds.h"
 #include "bits.h"
 
+//0x55FF
+#define	UART_SYNC_DATA	"\085\255"
+
 /* initialize UART */
 void InitUART( unsigned int baud ) {
 	// DDRD = 0xFF; // Set Datadirection to output
 	// InitUART(51);			// 1200 Baud, 1 Mhz
 	
 	DDRD = 0xFF;			// output
-	SETBIT(PORTB,PB0);		// enable pull-up
-	SETBIT(PORTB,PB1);		// enable pull-up
  	
 	UBRRH = (unsigned char)(baud>>8);
 	UBRRL = (unsigned char)baud;				//set the baud rate 
