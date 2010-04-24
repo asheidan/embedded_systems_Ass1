@@ -12,7 +12,7 @@ FUSES      = -U lfuse:w:0x64:m -U hfuse:w:0xdf:m
 SOURCES = $(shell ls *.c)
 
 ### Paths ####################################################################
-CFLAGS		:= -Wall
+CFLAGS		:= -Wall -O0 -D__DEBUG__
 AVR-PATH    := /usr/local/CrossPack-AVR/bin
 AVR-CC      := $(AVR-PATH)/avr-gcc
 AVR-OBJCOPY := $(AVR-PATH)/avr-objcopy
@@ -22,14 +22,14 @@ AVR-SIZE    := $(AVR-PATH)/avr-size
 ### Commands #################################################################
 
 AVRDUDE = $(AVR-PATH)/avrdude $(PROGRAMMER) -p $(DEVICE)
-COMPILE = $(AVR-CC) -Wall -O0 -mmcu=$(DEVICE)
+COMPILE = $(AVR-CC) $(CFLAGS) -mmcu=$(DEVICE)
 
 ### Functions ################################################################
 
 # $(call make-depend,source-file,object-file,depend-file)
 define make-depend
 	@# Include -MM to exclude "system headers"
-	$(AVR-CC) -MM -MP -MF $3 -MT $2 $1
+	$(AVR-CC) -mmcu=$(DEVICE) -MM -MP -MF $3 -MT $2 $1
 endef
 
 ### Project Rules ############################################################
@@ -37,7 +37,7 @@ endef
 default: $(TARGHEX)
 
 $(TARGET): $(TARGOBJS)
-	$(COMPILE) -o $@ $^
+	$(COMPILE) -o $@ $(TARGOBJS)
 
 ### Rules ####################################################################
 
@@ -58,6 +58,9 @@ readfuse:
 
 %.hex: %.elf
 	$(AVR-OBJCOPY) -j .text -j .data -O ihex $< $@
+
+# Make them all depend on changes in this file
+$(TARGOBJS) $(TARGET): Makefile
 
 %.o: %.c
 	$(call make-depend,$<,$@,$(subst .o,.d,$@))
