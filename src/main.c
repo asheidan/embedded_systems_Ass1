@@ -2,11 +2,12 @@
 #include <avr/interrupt.h>
 #include <avr/sleep.h>
 
-#include "control.h"
-#include "collision.h"
-#include "uart.h"
-#include "leds.h"
 #include "bits.h"
+#include "collision.h"
+#include "control.h"
+#include "leds.h"
+#include "timer.h"
+#include "uart.h"
 
 #define	SYSTEM_ADDRESS	'c'
 
@@ -22,6 +23,7 @@ int main() {
 	
 	InitControl();
 	InitCollision();
+	InitTimer();
 	
 	// Sleep
 	set_sleep_mode(SLEEP_MODE_IDLE);
@@ -61,6 +63,12 @@ ISR(PCINT_vect) {
 	TransmitString("\n\r");
 #endif
 }
+
+// Timer ~8Hz
+ISR(TIMER1_COMPA_vect) {
+	sleep_disable();
+}
+
 
 // USART, Recieve complete
 ISR(USART_RX_vect) {
