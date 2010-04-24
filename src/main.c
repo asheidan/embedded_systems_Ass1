@@ -9,7 +9,6 @@
 #include "timer.h"
 #include "uart.h"
 
-#define	SYSTEM_ADDRESS	'c'
 
 volatile unsigned char sensor_cache = 0;
 
@@ -56,6 +55,7 @@ ISR(PCINT_vect) {
 	if(sensors != sensor_cache) {
 		sensor_cache = (~sensors & COLLISION_PINS);
 		// TODO: transmit to remote
+		// RadioTransmit(sensor_cache);
 	}
 #ifdef __DEBUG__
 	TransmitString("Collision: ");
@@ -75,7 +75,7 @@ ISR(TIMER1_COMPA_vect) {
 ISR(USART_RX_vect) {
 	unsigned char data, checksum;
 	data = ReceiveByte();
-	if(data == SYSTEM_ADDRESS) {
+	if(data == UART_SYSTEM_ADDRESS) {
 		TransmitString("HELO\n\r");
 		data = ReceiveByte();
 		checksum = ReceiveByte();

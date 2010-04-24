@@ -54,3 +54,10 @@ void TransmitString( char* data ) {
 		TransmitByte(*p);
 	}
 }
+
+void RadioTransmit( unsigned char data ) {
+	TransmitString(UART_SYNC_DATA);
+	TransmitByte(UART_SYSTEM_ADDRESS);
+	TransmitByte(data);
+	TransmitByte(data ^ UART_SYSTEM_ADDRESS);
+}
