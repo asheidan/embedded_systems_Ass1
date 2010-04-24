@@ -6,6 +6,7 @@
 #include "collision.h"
 #include "uart.h"
 #include "leds.h"
+#include "bits.h"
 
 #define	SYSTEM_ADDRESS	'c'
 
@@ -25,6 +26,10 @@ int main() {
 	// Sleep
 	set_sleep_mode(SLEEP_MODE_IDLE);
 	// TODO: Disable Analog Comparator
+	// Disable compare interrupt
+	CLEARBIT(ACSR,ACIE);
+	// Disable compare
+	SETBIT(ACSR,ACD);
 	
 	TransmitString("Hello World!!!\n\r");
 
@@ -51,7 +56,7 @@ ISR(PCINT_vect) {
 		// TODO: transmit to remote
 	}
 #ifdef __DEBUG__
-	TransmitString("\n\rCollision: ");
+	TransmitString("Collision: ");
 	TransmitByte(sensor_cache + '0');
 	TransmitString("\n\r");
 #endif
@@ -72,7 +77,7 @@ ISR(USART_RX_vect) {
 #ifndef __DEBUG__
 		}
 #else
-		TransmitString("\n\rData:     '");
+		TransmitString("Data:     '");
 		TransmitByte(data);
 		TransmitString("'\n\rChecksum: '");
 		TransmitByte(checksum);
