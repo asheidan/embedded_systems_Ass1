@@ -1,6 +1,6 @@
 ### Makefile for AVR #########################################################
 TARGET     = main.elf
-TARGOBJS   = main.o uart.o leds.o control.o
+TARGOBJS   = main.o uart.o leds.o control.o collision.o
 TARGHEX    = $(TARGET:.elf=.hex)
 
 DEVICE     = attiny2313
@@ -34,7 +34,7 @@ endef
 
 ### Project Rules ############################################################
 
-default: $(TARGHEX)
+default: $(TARGET)
 
 $(TARGET): $(TARGOBJS)
 	$(COMPILE) -o $@ $(TARGOBJS)

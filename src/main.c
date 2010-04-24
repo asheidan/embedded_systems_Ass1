@@ -3,11 +3,11 @@
 #include <avr/sleep.h>
 
 #include "control.h"
+#include "collision.h"
 #include "uart.h"
 #include "leds.h"
 
 #define	SYSTEM_ADDRESS	'c'
-
 
 int main() {
 	/******************************************************
@@ -16,6 +16,9 @@ int main() {
 	//DDRD = 0xFF; // Set Datadirection to output
 	// UART
 	InitUART(51);			// 1200 Baud, 1 Mhz
+	
+	InitControl();
+	InitCollision();
 	
 	// Sleep
 	set_sleep_mode(SLEEP_MODE_IDLE);
@@ -31,6 +34,19 @@ int main() {
 		sleep_enable();
 		sleep_cpu();
   	} 
+}
+
+/******************************************************
+ *	Interrupt handlers
+ ******************************************************/
+
+// Collision
+ISR(PCINT_vect) {
+	unsigned char sensors = COLLISION_DATA;
+	motors_stop();
+	TransmitString("\n\rCollision: ");
+	TransmitByte(sensors + '0');
+	TransmitString("\n\r");
 }
 
 // USART, Recieve complete
