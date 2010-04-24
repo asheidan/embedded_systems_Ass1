@@ -27,7 +27,7 @@ int main() {
 	
 	// Sleep
 	set_sleep_mode(SLEEP_MODE_IDLE);
-	// TODO: Disable Analog Comparator
+	// FIXED: Disable Analog Comparator
 	// Disable compare interrupt
 	CLEARBIT(ACSR,ACIE);
 	// Disable compare
@@ -66,6 +66,7 @@ ISR(PCINT_vect) {
 
 // Timer ~8Hz
 ISR(TIMER1_COMPA_vect) {
+	// TODO: IR sensor communication
 	sleep_disable();
 }
 
