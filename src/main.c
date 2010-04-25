@@ -50,18 +50,18 @@ int main() {
 
 // Collision
 ISR(PCINT_vect) {
-	unsigned char sensors = COLLISION_DATA;
+	unsigned char sensors = (~COLLISION_DATA & COLLISION_PINS);
 	motors_stop();
-	if(sensors != sensor_cache) {
-		sensor_cache = (~sensors & COLLISION_PINS);
+	if((sensors > 0) && (sensors != sensor_cache)) {
+		sensor_cache = sensors;
 		// TODO: transmit to remote
 		RadioTransmit(sensor_cache);
-	}
 #ifdef __DEBUG__
-	TransmitString("\n\rCollision: ");
-	TransmitByte(sensor_cache + '0');
-	TransmitString("\n\r");
+		TransmitString("\n\rCollision: ");
+		TransmitByte(sensor_cache + '0');
+		TransmitString("\n\r");
 #endif
+	}
 }
 
 // Timer ~8Hz
