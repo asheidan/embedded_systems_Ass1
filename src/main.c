@@ -31,8 +31,9 @@ int main() {
 	CLEARBIT(ACSR,ACIE);
 	// Disable compare
 	SETBIT(ACSR,ACD);
-	
+#ifdef __DEBUG__
 	TransmitString("Hello World!!!\n\r");
+#endif
 
 	sei();
 	/******************************************************
@@ -55,10 +56,10 @@ ISR(PCINT_vect) {
 	if(sensors != sensor_cache) {
 		sensor_cache = (~sensors & COLLISION_PINS);
 		// TODO: transmit to remote
-		// RadioTransmit(sensor_cache);
+		RadioTransmit(sensor_cache);
 	}
 #ifdef __DEBUG__
-	TransmitString("Collision: ");
+	TransmitString("\n\rCollision: ");
 	TransmitByte(sensor_cache + '0');
 	TransmitString("\n\r");
 #endif
@@ -76,11 +77,13 @@ ISR(USART_RX_vect) {
 	unsigned char data, checksum;
 	data = ReceiveByte();
 	if(data == UART_SYSTEM_ADDRESS) {
+#ifdef __DEBUG__
 		TransmitString("HELO\n\r");
+#endif
 		data = ReceiveByte();
 		checksum = ReceiveByte();
 #ifndef __DEBUG__
-		if( checksum == (data ^ SYSTEM_ADDRESS)) {
+		if( checksum == (data ^ UART_SYSTEM_ADDRESS)) {
 #endif
 			ControlMotors(data);
 #ifndef __DEBUG__
