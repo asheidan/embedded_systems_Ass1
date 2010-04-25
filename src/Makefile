@@ -7,6 +7,7 @@ DEVICE     = attiny2313
 CLOCK      = 8000000
 # -B 8.68us = 115.2kHz Needs to be atmost 1/4 of dev clockspeed
 PROGRAMMER = -c stk500 -P /dev/tty.PL2303-00* -B 8.68
+# PROGRAMMER = -c avrisp2 -P usb -B 8.68
 FUSES      = -U lfuse:w:0x64:m -U hfuse:w:0xdf:m
 
 SOURCES = $(shell ls *.c)

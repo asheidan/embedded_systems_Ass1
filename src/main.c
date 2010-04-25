@@ -9,13 +9,11 @@
 #include "uart.h"
 
 
-volatile unsigned char sensor_cache = 0;
-
 int main() {
 	/******************************************************
 	 *	Setting up device
 	 ******************************************************/
-	//DDRD = 0xFF; // Set Datadirection to output
+	// DDRD = 0xFF; // Set Datadirection to output
 	// UART
 	InitUART(51);			// 1200 Baud, 1 Mhz
 	
@@ -35,6 +33,7 @@ int main() {
 #endif
 
 	sei();
+	motors_forward();
 	/******************************************************
 	 *	Main loop
 	 ******************************************************/
@@ -52,13 +51,12 @@ int main() {
 ISR(PCINT_vect) {
 	unsigned char sensors = (~COLLISION_DATA & COLLISION_PINS);
 	motors_stop();
-	if((sensors > 0) && (sensors != sensor_cache)) {
-		sensor_cache = sensors;
+	if(sensors > 0) {
 		// TODO: transmit to remote
-		RadioTransmit(sensor_cache);
+		RadioTransmit(sensors);
 #ifdef __DEBUG__
 		TransmitString("\n\rCollision: ");
-		TransmitByte(sensor_cache + '0');
+		TransmitByte(sensors + '0');
 		TransmitString("\n\r");
 #endif
 	}
