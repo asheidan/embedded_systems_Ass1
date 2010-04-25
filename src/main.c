@@ -5,7 +5,6 @@
 #include "bits.h"
 #include "collision.h"
 #include "control.h"
-#include "leds.h"
 #include "timer.h"
 #include "uart.h"
 
