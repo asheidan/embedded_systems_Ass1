@@ -22,6 +22,8 @@ int main() {
 	InitCollision();
 	InitTimer();
 	
+	RadioTransmit(0xFF);
+	
 	// Sleep
 	set_sleep_mode(SLEEP_MODE_IDLE);
 	// FIXED: Disable Analog Comparator

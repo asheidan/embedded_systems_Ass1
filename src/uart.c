@@ -60,6 +60,8 @@ void RadioTransmit( unsigned char data ) {
 	TransmitByte(UART_REMOTE_ADDRESS);
 	TransmitByte(data);
 	TransmitByte(data ^ UART_REMOTE_ADDRESS);
+	TransmitByte(0xFF);
+	TransmitByte(0xFF);
 	SetRecieveMode();
 }
 /*

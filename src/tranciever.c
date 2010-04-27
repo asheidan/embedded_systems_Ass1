@@ -7,7 +7,7 @@
 
 void InitTranciever() {
 	DDRA |= 0b00000001;
-	SetTransmitMode();
+	SetRecieveMode();
 }
 
 void SetTransmitMode() {
@@ -18,8 +18,8 @@ void SetTransmitMode() {
 }
 
 void SetRecieveMode() {
-	// PORTA &= 0b11111110;
-	// _delay_ms(3);
+	PORTA &= 0b11111110;
+	_delay_ms(3);
 	// SETBIT(UCSRA,TXC);
 	// SETBIT(UCSRA,RXC);
 }
