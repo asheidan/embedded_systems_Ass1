@@ -53,7 +53,9 @@ int main() {
 // Collision
 ISR(PCINT_vect) {
 	unsigned char sensors = (~COLLISION_DATA & COLLISION_PINS);
-	motors_stop();
+	if(sensors == 0) {
+		motors_stop();
+	}
 	// if(sensors > 0) {
 	RadioTransmit(sensors);
 #ifdef __DEBUG__
