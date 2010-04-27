@@ -1,10 +1,3 @@
-//connect 4 LEDs between PD2,PD3,PD4,PD5 and GND
-//with anode to pin and cathode to GND
-
-//connect to buttons between PB0, PB1 and GND
-
-//connect PD0 ( RXD) to STK500 RXD 
-//and PD1 (TXD) to STK500 TXD	( see picture )
 
 //CPU freq 1 MHz
 
@@ -14,33 +7,39 @@
 #include "uart.h"
 #include "leds.h"
 #include "bits.h"
+#include "tranciever.h"
 
 //0x55FF
-#define	UART_SYNC_DATA	"\085\255"
+#define	UART_SYNC_DATA	"U\xFF"
 
 /* initialize UART */
 void InitUART( unsigned int baud ) {
 	// DDRD = 0xFF; // Set Datadirection to output
 	// InitUART(51);			// 1200 Baud, 1 Mhz
 	
-	DDRD = 0xFF;			// output
+	// DDRD = 0xFF;			// output
  	
 	UBRRH = (unsigned char)(baud>>8);
 	UBRRL = (unsigned char)baud;				//set the baud rate 
 	UCSRB = _BV(RXEN) | _BV(TXEN);	//enable UART receiver and transmitter 
 	
 	/* Set frame format: 8data, 2stop bit */
-	UCSRC = (1<<USBS)|(3<<UCSZ0);
+	// UCSRC = (1<<USBS)|(3<<UCSZ0);
+	UCSRC = (1<<USBS)|(1<<UCSZ0)|(1<<UCSZ1);
 	
 	/* Enagle RC_Int */
 	UCSRB |= (1<<RXCIE);
+	
+	InitTranciever();
 	
 }
 
 /* Read and write functions */
 unsigned char ReceiveByte( void ) {
-	loop_until_bit_is_set(UCSRA,RXC);		// wait for incomming data 
-	return UDR;							// return the data 
+	loop_until_bit_is_set(UCSRA,RXC);		// wait for incomming data
+	unsigned char t = UDR;
+	// TransmitByte(t);
+		return t; //UDR;							// return the data 
 }
 
 void TransmitByte( unsigned char data ) {
@@ -56,8 +55,18 @@ void TransmitString( char* data ) {
 }
 
 void RadioTransmit( unsigned char data ) {
+	SetTransmitMode();
 	TransmitString(UART_SYNC_DATA);
-	TransmitByte(UART_SYSTEM_ADDRESS);
+	TransmitByte(UART_REMOTE_ADDRESS);
 	TransmitByte(data);
-	TransmitByte(data ^ UART_SYSTEM_ADDRESS);
+	TransmitByte(data ^ UART_REMOTE_ADDRESS);
+	SetRecieveMode();
 }
+/*
+int main() {
+	InitUART(25);
+	for(;;) {
+		TransmitByte(0x55);
+	}
+}
+*/

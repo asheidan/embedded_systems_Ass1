@@ -1,7 +1,8 @@
 #ifndef _UART_H_
 #define _UART_H_
 
-#define	UART_SYSTEM_ADDRESS	'c'
+#define	UART_SYSTEM_ADDRESS	0x21
+#define	UART_REMOTE_ADDRESS	0x20
 
 void InitUART( unsigned int baud );
 

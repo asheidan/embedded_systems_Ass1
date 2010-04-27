@@ -2,6 +2,7 @@
 #include <avr/interrupt.h>
 #include <avr/sleep.h>
 
+#include "delay.h"
 #include "bits.h"
 #include "collision.h"
 #include "control.h"
@@ -15,7 +16,7 @@ int main() {
 	 ******************************************************/
 	// DDRD = 0xFF; // Set Datadirection to output
 	// UART
-	InitUART(51);			// 1200 Baud, 1 Mhz
+	InitUART(25);			// 1200 Baud, 1 Mhz
 	
 	InitControl();
 	InitCollision();
@@ -33,7 +34,7 @@ int main() {
 #endif
 
 	sei();
-	motors_forward();
+
 	/******************************************************
 	 *	Main loop
 	 ******************************************************/
@@ -51,15 +52,15 @@ int main() {
 ISR(PCINT_vect) {
 	unsigned char sensors = (~COLLISION_DATA & COLLISION_PINS);
 	motors_stop();
-	if(sensors > 0) {
-		// TODO: transmit to remote
-		RadioTransmit(sensors);
+	// if(sensors > 0) {
+	RadioTransmit(sensors);
 #ifdef __DEBUG__
-		TransmitString("\n\rCollision: ");
-		TransmitByte(sensors + '0');
-		TransmitString("\n\r");
+	TransmitString("\n\rCollision: ");
+	TransmitByte(sensors + '0');
+	TransmitString("\n\r");
 #endif
-	}
+	// }
+	_delay_ms(50);
 }
 
 // Timer ~8Hz

@@ -1,28 +1,31 @@
 ### Makefile for AVR #########################################################
 TARGET     = main.elf
-TARGOBJS   = main.o uart.o timer.o control.o collision.o
+TARGOBJS   = main.o uart.o timer.o control.o collision.o tranciever.o
+# TARGOBJS   = uart.o
 TARGHEX    = $(TARGET:.elf=.hex)
 
 DEVICE     = attiny2313
 CLOCK      = 8000000
 # -B 8.68us = 115.2kHz Needs to be atmost 1/4 of dev clockspeed
-PROGRAMMER = -c stk500 -P /dev/tty.PL2303-00* -B 8.68
-# PROGRAMMER = -c avrisp2 -P usb -B 8.68
+# PROGRAMMER = -c stk500 -P /dev/tty.PL2303-00* -B 8.68
+PROGRAMMER = -c avrisp2 -P usb -B 8.68
 FUSES      = -U lfuse:w:0x64:m -U hfuse:w:0xdf:m
 
 SOURCES = $(shell ls *.c)
 
 ### Paths ####################################################################
-CFLAGS		:= -Wall -O0 -D__DEBUG__
-AVR-PATH    := /usr/local/CrossPack-AVR/bin
-AVR-CC      := $(AVR-PATH)/avr-gcc
-AVR-OBJCOPY := $(AVR-PATH)/avr-objcopy
-AVR-OBJDUMP := $(AVR-PATH)/avr-objdump
-AVR-SIZE    := $(AVR-PATH)/avr-size
+CFLAGS		:= -Wall -Os
+# -D__DEBUG__
+AVR-PATH    := /usr/local/CrossPack-AVR/bin/
+PATH			:= $(PATH):$(AVR-PATH)
+AVR-CC      := sh avr-gcc
+AVR-OBJCOPY := avr-objcopy
+AVR-OBJDUMP := avr-objdump
+AVR-SIZE    := avr-size
 
 ### Commands #################################################################
 
-AVRDUDE = $(AVR-PATH)/avrdude $(PROGRAMMER) -p $(DEVICE)
+AVRDUDE = avrdude $(PROGRAMMER) -p $(DEVICE)
 COMPILE = $(AVR-CC) $(CFLAGS) -mmcu=$(DEVICE)
 
 ### Functions ################################################################
