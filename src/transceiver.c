@@ -1,11 +1,11 @@
-#include "tranciever.h"
+#include "transceiver.h"
 
 #include <avr/io.h>
 
 #include "delay.h"
 #include "bits.h"
 
-void InitTranciever() {
+void InitTransceiver() {
 	DDRA |= 0b00000001;
 	SetRecieveMode();
 }

@@ -6,7 +6,7 @@
 #include "control.h"
 #include "uart.h"
 #include "bits.h"
-#include "tranciever.h"
+#include "transceiver.h"
 
 //0x55FF
 #define	UART_SYNC_DATA	"U\xFF"
@@ -29,7 +29,7 @@ void InitUART( unsigned int baud ) {
 	/* Enagle RC_Int */
 	UCSRB |= (1<<RXCIE);
 	
-	InitTranciever();
+	InitTransceiver();
 	
 }
 

@@ -1,6 +1,6 @@
 ### Makefile for AVR #########################################################
 TARGET     = main.elf
-TARGOBJS   = main.o uart.o control.o collision.o tranciever.o
+TARGOBJS   = main.o uart.o control.o collision.o transceiver.o
 # TARGOBJS   = ir_test.o collision.o
 TARGHEX    = $(TARGET:.elf=.hex)
 
