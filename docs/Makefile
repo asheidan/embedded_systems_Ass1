@@ -39,7 +39,7 @@ view: $(TARGET)
 %.ind: %.idx
 	makeindex $<
 
-%.bbl: %.aux $(BIBDB)
+%.bbl: %.aux $(shell ls *.bib)
 	bibtex $<
 
 %.gls: %.glo

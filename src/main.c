@@ -52,7 +52,7 @@ int main() {
 // Collision
 ISR(PCINT_vect) {
 	unsigned char sensors = (~COLLISION_DATA & COLLISION_PINS);
-	if(sensors == 0) {
+	if(sensors != 0) {
 		motors_stop();
 	}
 	// if(sensors > 0) {

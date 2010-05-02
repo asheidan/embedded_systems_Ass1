@@ -5,6 +5,9 @@ name = File.basename(ARGV[0],".tex")
 
 
 deps = []
+bibdb = ""
+
+reg = /\{([^\}]*)\}/
 
 
 if !`grep '^[^%]*\\tableofcontents' #{ARGV[0]}`.strip.empty? then
@@ -27,10 +30,13 @@ if !`grep '^[^%]*\\printnomenclature' #{ARGV[0]}`.strip.empty? then
 	deps << "#{name}.nls"
 end
 
-if !`grep '^[^%]*\\bibliography{[^}]*}' #{ARGV[0]}`.strip.empty? then
+bibliography = `grep '^[^%]*\\bibliography' #{ARGV[0]}`.strip
+puts bibliography.inspect
+if !bibliography.empty? then
+	puts "Citations!"
 	deps << "#{name}.bbl"
 	
-	bibdb = `grep '^[^%]*\\bibliography{[^}]*}' #ARGV[0] | sed 's/.*{\(.*\).*}/\1/'`.strip
+	bibdb = reg.match(bibliography).match[1]
 	if bibdb =~ /\.bib$/ then
 		bibdb << ".bib"
 	end
@@ -38,12 +44,14 @@ if !`grep '^[^%]*\\bibliography{[^}]*}' #{ARGV[0]}`.strip.empty? then
 	deps << bibdb
 end
 
-reg = /\{([^\}]*)\}/
+puts bibdb
 
-figures = `grep '^[^%]*\\includegraphics[^{]*{[^}]*}' #{ARGV[0]}`.split('\n').collect do |line|
-	reg.match(line)[1]
+
+figures = `grep '^[^%]*\\includegraphics' #{ARGV[0]}`.lines.collect do |line|
+ 	reg.match(line)[1]
 end
 
 File.open(ARGV[2],'w') do |dep_file|
- 	dep_file.write "#{ARGV[1]}: #{figures.join(' ')} #{deps.join(' ')}\n"
+ 	dep_file.write "#{ARGV[1]}: #{figures.join(' ')} #{deps.join(' ')}\n\n"
+	# dep_file.write "#{name}.bbl: #{bibdb}\n"
 end
