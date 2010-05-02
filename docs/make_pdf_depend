@@ -1,0 +1,49 @@
+#!/usr/bin/env ruby
+
+name = File.basename(ARGV[0],".tex")
+
+
+
+deps = []
+
+
+if !`grep '^[^%]*\\tableofcontents' #{ARGV[0]}`.strip.empty? then
+	deps << "#{name}.toc"
+end
+
+if !`grep '^[^%]*\\listoffigures' #{ARGV[0]}`.strip.empty? then
+	deps << "#{name}.lof"
+end
+
+if !`grep '^[^%]*\\printindex' #{ARGV[0]}`.strip.empty? then
+	deps << "#{name}.ind"
+end
+
+if !`grep '^[^%]*\\printglossary' #{ARGV[0]}`.strip.empty? then
+	deps << "#{name}.gls"
+end
+
+if !`grep '^[^%]*\\printnomenclature' #{ARGV[0]}`.strip.empty? then
+	deps << "#{name}.nls"
+end
+
+if !`grep '^[^%]*\\bibliography{[^}]*}' #{ARGV[0]}`.strip.empty? then
+	deps << "#{name}.bbl"
+	
+	bibdb = `grep '^[^%]*\\bibliography{[^}]*}' #ARGV[0] | sed 's/.*{\(.*\).*}/\1/'`.strip
+	if bibdb =~ /\.bib$/ then
+		bibdb << ".bib"
+	end
+	
+	deps << bibdb
+end
+
+reg = /\{([^\}]*)\}/
+
+figures = `grep '^[^%]*\\includegraphics[^{]*{[^}]*}' #{ARGV[0]}`.split('\n').collect do |line|
+	reg.match(line)[1]
+end
+
+File.open(ARGV[2],'w') do |dep_file|
+ 	dep_file.write "#{ARGV[1]}: #{figures.join(' ')} #{deps.join(' ')}\n"
+end
