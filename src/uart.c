@@ -5,7 +5,6 @@
 
 #include "control.h"
 #include "uart.h"
-#include "leds.h"
 #include "bits.h"
 #include "tranciever.h"
 

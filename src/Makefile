@@ -1,7 +1,7 @@
 ### Makefile for AVR #########################################################
 TARGET     = main.elf
-TARGOBJS   = main.o uart.o timer.o control.o collision.o tranciever.o
-# TARGOBJS   = uart.o
+TARGOBJS   = main.o uart.o control.o collision.o tranciever.o
+# TARGOBJS   = ir_test.o collision.o
 TARGHEX    = $(TARGET:.elf=.hex)
 
 DEVICE     = attiny2313
@@ -28,6 +28,13 @@ AVR-SIZE    := avr-size
 AVRDUDE = avrdude $(PROGRAMMER) -p $(DEVICE)
 COMPILE = $(AVR-CC) $(CFLAGS) -mmcu=$(DEVICE)
 
+default: $(TARGET)
+
+# Including generated dependencies
+ifneq "$(MAKECMDGOALS)" "clean"
+-include $(subst .o,.d,$(TARGOBJS))
+endif
+
 ### Functions ################################################################
 
 # $(call make-depend,source-file,object-file,depend-file)
@@ -37,8 +44,6 @@ define make-depend
 endef
 
 ### Project Rules ############################################################
-
-default: $(TARGET)
 
 $(TARGET): $(TARGOBJS)
 	$(COMPILE) -o $@ $(TARGOBJS)
@@ -67,16 +72,12 @@ readfuse:
 $(TARGOBJS) $(TARGET): Makefile
 
 %.o: %.c
+	# $^
 	$(call make-depend,$<,$@,$(subst .o,.d,$@))
 	$(COMPILE) -c -o $@ $<
 
 clean:
 	-rm -f *.o *.hex *.elf *.d *.tmp
-
-# Including generated dependencies
-ifneq "$(MAKECMDGOALS)" "clean"
-	-include $(subst .c,.d,$(SOURCES))
-endif
 
 .PHONY: clean clean_all default
 

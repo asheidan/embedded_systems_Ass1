@@ -20,7 +20,6 @@ int main() {
 	
 	InitControl();
 	InitCollision();
-	InitTimer();
 	
 	RadioTransmit(0xFF);
 	
@@ -65,12 +64,6 @@ ISR(PCINT_vect) {
 #endif
 	// }
 	_delay_ms(50);
-}
-
-// Timer ~8Hz
-ISR(TIMER1_COMPA_vect) {
-	// TODO: IR sensor communication
-	sleep_disable();
 }
 
 
